@@ -1,0 +1,282 @@
+\input{praeambel}
+\begin{document}
+%
+\begin{frame}[plain]
+  \begin{center}
+    \includegraphics[width=4cm]{../bilder/hhulogo}
+  \end{center}
+  \vspace{-1cm}
+  \titlepage
+\end{frame}
+%
+\section*{Einleitung}
+\setcounter{framenumber}{0}
+%
+\begin{frame}
+    \frametitle{Es war einmal}
+    \begin{itemize}[<+->]
+        \item AWT
+        \item Swing
+        \begin{itemize}[<+->]
+            \item SeeSaw
+        \end{itemize}
+        \item JavaFX (OpenJFX11) 
+        \begin{itemize}[<+->]
+            \item fn-fx (you are here)
+        \end{itemize}
+   \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{GUI-Entwicklung}
+    \begin{itemize}[<+->]
+        \item SceneGraph
+        \begin{itemize}[<+->]
+            \item Nodes mit Children
+            \item Praktisch überall die Grundlage
+            \item Aufbau durch stetige Mutation
+            \item Nicht sehr praktisch / simpel 
+        \end{itemize}
+        \item Besser: Hierarchische DSL
+        \begin{itemize}[<+->]
+            \item Web / Javascript SPA: HTML
+            \item JavaFX: FXML
+        \end{itemize}
+        \item Nachträgliche Änderungen?
+        \begin{itemize}[<+->]
+            \item JavaFX: SceneGraph Mutation
+            \item Js/Web: DOM Mutation
+            \item Angular,React,etc: nein, Virtual-DOM!
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{Idealfall}
+    \begin{itemize}[<+->]
+        \item MVC
+        \item Model: Daten 
+        \item View: Repräsentierung
+        \item Controller: Mutation
+   \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{Idealfall}
+    \begin{itemize}
+        \item MVC
+        \item Model: Daten 
+        \item View: Repräsentierung
+        \item Controller: \sout{Mutation} Änderung über die Zeit hinweg
+   \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{GUI-Entwicklung}
+    \begin{itemize}[<+->]
+        \item Was Angular für JS gemacht hat, macht fn-fx für JavaFX
+        \item Clojure
+        \begin{itemize}[<+->]
+            \item Model (Daten): Clojure
+            \item View (Hierarchische DSL): Clojure
+            \item Controller: Clojure
+            \item \sout{Mutation?} Änderung über die Zeit hinweg: atoms/agents
+        \end{itemize}
+        \item Styling
+        \begin{itemize}[<+->]
+            \item CSS
+            \item generiert durch Clojure
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{GUI-Entwicklung}
+    \begin{itemize}[<+->]
+        \item Demo-Time
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+  \frametitle{Mutation}
+    \begin{itemize}[<+->]
+        \item Ändere den Text im Label in der VBox (Wie?)
+        \item irgendwie müssen wir den Graph durchlaufen
+        \item Gib mir das 2.e Kind des ersten Kindes der Scene
+        \begin{itemize}[<+->]
+            \item Layout ändern = App kaputt machen
+        \end{itemize}
+        \item Irgendwoher hab ich den Parent (VBox)
+        \item 2.es Kind
+        \begin{itemize}[<+->]
+            \item Besser. Aber Problem nur auf lokales Problem degradiert. Nicht gelöst.
+        \end{itemize}
+        \item fx:id
+        \item Java-FX übernimmt den Lookup. Cool!
+        \item fx:ids \& @FXML inject nur via fxml
+        \item Was wenn wir die Node komplett austauschen wollen?
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{Mutation}
+    \begin{itemize}[<+->]
+        \item Problem:
+        \begin{itemize}[<+->]
+            \item Wir wollen hierarchisch
+            \item Wir wollen keinen manuellen lookup
+            \item Wir wollen eigentlich nur den Text ändern
+            \item Wo die Änderung in der View stattfindet ist uns beim Ändern der Daten egal
+            \item (in dem Label. in der Vbox. In der Szene.)
+        \end{itemize}
+        \item kompletten Graph neu berechnen
+        \begin{itemize}[<+->]
+            \item Aber wann genau?
+        \end{itemize}
+        \item Virtueller Szenengraph, aus dem man den echten bauen kann
+        \begin{itemize}[<+->]
+            \item Leichtgewichtig
+            \item Diff mit dem momentanen Szenengraph
+            \item Austatusch von Nodes / Properties durch fn-fx
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{Recap}
+    \begin{itemize}[<+->]
+        \item Prozedural den Graph manipulieren
+        \item vs.
+        \item Einfach den virtual-DOM neu berechnen
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+    \frametitle{Bunte Dinge}
+    \begin{itemize}[<+->]
+        \item Entspannung
+        \item Demo Time
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+  \frametitle{Funktionsweise}
+    \begin{itemize}[<+->]
+        \item Achtung: camel $\rightarrow$ kabob
+        \item AnchorPane $\Rightarrow$ anchor-pane
+        \item defui definiert User-Komponenten
+        \item fn-fx.controls enthält JavaFX Controls Wrapper
+        \begin{itemize}[<+->]
+            \item Setze properties einer JavaFX Node durch
+            \item nodeInstance.setMyProperty(myvalue) $\Rightarrow$ :my-property myvalue
+            \begin{itemize}[<+->]
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    myLabel.setStyle("-fx-background-color: red;")|}
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    (controls/label :style "-fx-background-color: red;")|}
+            \end{itemize}
+            \item CrazyClassName.callMethod(this,value) $\Rightarrow$ :crazy-class-name/call-method myvalue
+            \begin{itemize}[<+->]
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    AnchorPane.setTopAnchor(this,0)|}
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    (controls/label :anchor-pane/top-anchor 0.0)|}
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+  \frametitle{Funktionsweise}
+    \begin{itemize}[<+->]
+        \item Events sind Daten
+        \item Bei Eventhandlern: Die map spezifizieren, die auf der ``Controller'' Seite ankommen soll
+        \begin{itemize}[<+->]
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    :on-click \{:foo :bar\}|}
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                    :on-action \{:event-type :the-red-button-was-pressed\}|}
+        \end{itemize}
+        \item Informationen mit Event mitschicken:
+        \item :fn-fx/include
+        \begin{itemize}[<+->]
+                \item \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                     :on-action \{|}
+                     \par
+                      \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                      :event :foo|}                   
+                      \par
+                \begin{itemize}[<+->]
+                        \item 
+                      \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                      :fn-fx/include \{:my-dom-node-id \#\{:text :foo-property\}|}
+                        \item 
+                      \colorbox{black}{\lstinline[breaklines=true, basicstyle=\ttfamily\color{white}]|
+                      :fn-fx/include \{:fn-fx/event \#\{:target :bar\}\}|}
+                \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+  \frametitle{Kritik}
+    \begin{itemize}[<+->]
+        \item Dokumentation
+        \begin{itemize}[<+->]
+            \item Magisches Verhalten u. Features
+            \begin{itemize}[<+->]
+                \item fn-fx/includes map: keys werden per find-nearest-by-id als lookup für dom-nodes genutzt
+                \item vgl. form-demo. Wie kommen in das Event die Eingaben aus den anderen Feldern?
+                \item Cooles Feature. Hätte ich gerne von Anfang an gewusst
+            \end{itemize}
+            \item Magische genamespacete Keywords (welche? wann?)
+            \begin{itemize}[<+->]
+                \item fn-fx/includes
+                \item fn-fx/event
+                \item fn-fx/listen
+                \item class-name/static-method
+            \end{itemize}
+        \end{itemize}
+        \item Nicht ganz Feature-Complete
+        \begin{itemize}[<+->]
+                \item Property-Bind
+                \item fn-fx/bind (?)
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}
+  \frametitle{Aufgabe für Heute}
+    \begin{itemize}[<+->]
+        \item Kleinere Tasks zum warm werden
+        \begin{itemize}[<+->]
+            \item VBox mit Button und Label
+            \begin{itemize}[<+->]
+                \item VBox mit Button und TextField
+                \item Buttonpress $\Rightarrow$ dupliziere TextField Text
+            \end{itemize}
+            \item Layouting
+            \begin{itemize}[<+->]
+                \item GridPane Form
+            \end{itemize}
+            \item CSS
+            \begin{itemize}[<+->]
+                \item garden
+                \item css.clj Anpassen
+            \end{itemize}
+    \end{itemize}
+        \item Etwas mehr
+        \begin{itemize}[<+->]
+            \item Wetter-App mit TextEingabe etc.
+            \item z.B. via http://wttr.in
+            \item (slurp "http://wttr.in/düsseldorf?format=\%l:\%C,\%t")
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}[plain]
+  \frametitle{Fragen}
+	\begin{center}
+ 		Vielen Dank für Ihre Aufmerksamkeit!
+	\end{center}
+\end{frame}
+\end{document}

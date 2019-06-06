@@ -1,0 +1,52 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+\usetheme{CambridgeUS}
+\usecolortheme{dolphin}
+
+
+%\setbeamercovered{transparent}
+%\useinnertheme{circles}
+
+\usepackage{pgfpages}
+%\setbeameroption{show notes on second screen}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize subitem}[triangle]
+}
+\mode<handout>{\setbeamercolor{background canvas}{bg=black!5}}
+
+%\usepackage{ngerman}
+\usepackage[ngerman]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb}
+\usepackage{listings}
+
+\usepackage{color} 
+\usepackage{microtype} 
+\usepackage{graphicx} 
+\usepackage{multimedia}
+\usepackage[normalem]{ulem}
+
+
+%better tabulars
+\usepackage{array} 
+\usepackage{booktabs}
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\usepackage[NewCommands]{ragged2e} % Better raggedleft formating
+\newcolumntype{v}[1]{>{\PreserveBackslash{\raggedright}\hspace{0pt}}p{#1}}
+\renewcommand{\arraystretch}{1.20}
+\usepackage{multirow}
+
+%\usepackage{minted}
+
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+
+\title[fn-fx]{GUI-Programmierung mit fn-fx}
+\author{Chris Rutenkolk} 
+\institute[HHU]{Institut für Informatik\\Lehrstuhl für Softwaretechnik und Programmiersprachen}
+\date[06.06.2019]{6. Juni 2019}
+\logo{\pgfimage[width=2cm]{../bilder/hhulogo}}
