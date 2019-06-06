@@ -52,13 +52,13 @@
 
 (defn load-images-from-pdf! [path]
   (let [document (org.apache.pdfbox.pdmodel.PDDocument/load (clojure.java.io/file path))
-        pdfRenderer (org.apache.pdfbox.rendering.PDFRenderer. document)]
+        local-doc (proxy [ThreadLocal] [] (initialValue [] document))]
     (doall
       (pmap
         (fn [page]
           (javafx.embed.swing.SwingFXUtils/toFXImage
-            (.renderImageWithDPI pdfRenderer page 300
-                                 org.apache.pdfbox.rendering.ImageType/RGB)
+           (.renderImageWithDPI (org.apache.pdfbox.rendering.PDFRenderer. document)
+                                page 300 org.apache.pdfbox.rendering.ImageType/RGB)
             nil))
         (range (.getNumberOfPages document))))))
 
